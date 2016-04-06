@@ -3,7 +3,6 @@ module JsonApiResource
     class CachedCircuitbreakerServerConnection < Multiconnect::Connection::Base
       include Keyable
 
-      class_attribute :cache
       class_attribute :cache_processor
       class_attribute :error_notifier
 
@@ -26,7 +25,7 @@ module JsonApiResource
           
           result = client_request(action, *args)
 
-          cache(action, args, result) if cache_processor.cache?(action)
+          cache_processor.write(client, action, args, result) if cache?
 
           result
 
@@ -67,17 +66,7 @@ module JsonApiResource
       end
 
       def cache?
-        @caching && cache.present?
-      end
-
-      def cache(action, args, result)
-        key = cache_key(client, action, args)
-
-        if cache_processor.present?
-          result = cache_processor.process action, args, result
-        end
-
-        self.class.cache.write key, result
+        @caching
       end
 
       def client_request(action, *args)

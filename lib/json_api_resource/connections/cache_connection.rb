@@ -15,9 +15,7 @@ module JsonApiResource
       end
 
       def request( action, *args )
-        key = cache_key(client, action, args)
-        set = self.class.cache.fetch key
-        self.cache_processor.extract set
+        cache_processor.read client, action, args
       end
     end
   end

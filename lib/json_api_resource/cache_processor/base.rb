@@ -3,12 +3,12 @@ module JsonApiResource
     class Base
 
       class << self 
-        def process(action, *args, result)
+        def write( client, action, *args, result )
           result
         end
 
-        def extract(set)
-          set
+        def read( client, action, *args )
+          []
         end
       end
     end
