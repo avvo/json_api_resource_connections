@@ -6,29 +6,76 @@ module JsonApiResource
 
       class << self
 
-        def write(client, action, *args, result)
-          result.each do |item|
-            cache.write 
+        def write(client, action, args, result)
+          result_set = Array(result)
 
-          result.map!(&:id)
+          key = cache_key(client, action, args)
           
+          # result set has ids and we can break the set down into an array of ids and the objects
+          if splitable?(result_set)
+            
+            write_ids(key, result_set)
+            
+            write_objects(client, action, result_set)
+
+          else
+            cache.write key, result_set
+          end
+
+          result
         end
 
-        def read(client, action, *args)
-          set
+        def read(client, action, args)
+          key = cache_key(client, action, args)
+          set = cache.read key
+
+          # set can be an array of blobs or an array of ids
+          set.map do |item|
+            # if the results are ids
+            if item.is_a? Integer
+              # grab the actual object from cache
+              key = item_cache_key(client, action, item)
+              cache.read key
+            # if they are not ids
+            else
+              # they have to be the full objects. return them
+              item
+            end
+          end
         end
 
         private 
 
-        def cache_key(client, action, args)
+        def cache_key(client, action, args = nil)
           # this can come in as a class or as an instance
           #                                       class    |     instance
           class_string = client.is_a?(Class) ? client.to_s : client.class.to_s
-          "#{class_string}/#{action}/#{ordered_args(args)}"
+          class_string = class_string.underscore
+          args = ordered_args(args) if args
+          "#{class_string}/#{action}/#{args}"
+        end
+
+        def item_cache_key(client, action, id)
+          "#{cache_key(client, action)}/#{id}"
         end
 
         def ordered_args(args)
           args.sort.to_h
+        end
+
+        def splitable?(result_set)
+          result_set.select{|_| _["id"]}.present?
+        end
+
+        def write_ids(key, result_set)
+          cache.write key, result_set.map{|_| _["id"]}
+        end
+
+        def write_objects(client, action, result_set)
+          result_set.each do |item|
+            key = item_cache_key client, action, item["id"]
+            cache.write key, item
+          end
         end
       end
     end

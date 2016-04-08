@@ -26,9 +26,22 @@ And it should auto magically inject itself into `JsonApiResource::Resource`
 
 ### CacheProcessor
 
-TODO Explanation of what this is here
+Cache Processor is the component that handles caching. `CompressedCacheProcessor` caches results in two pieces: the actual object and the ids for the action. So your `Snack.search(q: "cheezbergher")` call will cache as 
+``` ruby
+'snack/search/q=>"cheezbergher"' => `[1, 2, 3, 4]`
 
-in your `config/json_api_resource.rb` you will need to set up the cache layer for the `CacheProcessor`
+# and
+
+"snack/search/1" => {id: 1, ... }
+"snack/search/2" => {id: 2, ... }
+...
+```
+
+When no id is present in the response, the full response will be cached.
+
+#### Setup
+
+In your `config/json_api_resource.rb` you will need to set up the cache layer for the `CacheProcessor`
 
 ```ruby
 module JsonApiResource
@@ -46,6 +59,9 @@ module JsonApiResource
 end
 ```
 
+### Connections
+
+The default connection is the `CachedCircuitbreakerServerConnection`. It will prevent any more calls to the server if any non-404 error is returned for 30 seconds. If you assign cache_processor, the cache part will kick in and cache the results returnrd from the server. 
 
 ## Development
 
