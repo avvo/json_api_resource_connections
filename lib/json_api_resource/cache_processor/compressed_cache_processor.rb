@@ -56,7 +56,7 @@ module JsonApiResource
         end
 
         def item_cache_key(client, action, id)
-          "#{cache_key(client, action)}/#{id}"
+          "#{cache_key(client, action)}id:#{id}"
         end
 
         def ordered_args(args)

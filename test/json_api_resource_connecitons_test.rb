@@ -5,7 +5,14 @@ class JsonApiResourceConnecitonsTest < Minitest::Test
     refute_nil ::JsonApiResourceConnecitons::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
+  def test_connections_load
+    assert_equal 1, UserResource._connections.count
+    assert_equal 2, CachedUserResource._connections.count
+  end
+
+  def test_connections_initialize_properly
+    assert_equal JsonApiResource::CacheProcessor::CompressedCacheProcessor.cache.class, Cache
+    assert_equal JsonApiResource::Connections::CacheConnection.cache_processor, JsonApiResource::CacheProcessor::CompressedCacheProcessor
+    assert_equal JsonApiResource::Connections::CachedCircuitbreakerServerConnection.cache_processor, JsonApiResource::CacheProcessor::CompressedCacheProcessor
   end
 end

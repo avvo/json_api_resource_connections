@@ -1,7 +1,6 @@
 module JsonApiResource
   module Connections
     class CacheConnection < Multiconnect::Connection::Base
-      include Keyable
 
       class_attribute :cache_processor
             

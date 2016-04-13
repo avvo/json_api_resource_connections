@@ -1,7 +1,6 @@
 module JsonApiResource
   module Connections
     class CachedCircuitbreakerServerConnection < Multiconnect::Connection::Base
-      include Keyable
 
       class_attribute :cache_processor
       class_attribute :error_notifier
