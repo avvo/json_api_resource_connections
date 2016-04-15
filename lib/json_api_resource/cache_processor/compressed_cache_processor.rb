@@ -6,10 +6,10 @@ module JsonApiResource
 
       class << self
 
-        def write(client, action, args, result)
+        def write(result, client, action, *args)
           result_set = Array(result)
 
-          key = cache_key(client, action, args)
+          key = cache_key(client, action, *args)
           
           # result set has ids and we can break the set down into an array of ids and the objects
           if splitable?(result_set)
@@ -25,8 +25,8 @@ module JsonApiResource
           result
         end
 
-        def read(client, action, args)
-          key = cache_key(client, action, args)
+        def read(client, action, *args)
+          key = cache_key(client, action, *args)
           set = cache.read key
 
           # set can be an array of blobs or an array of ids
@@ -46,12 +46,12 @@ module JsonApiResource
 
         private 
 
-        def cache_key(client, action, args = nil)
+        def cache_key(client, action, *args)
           # this can come in as a class or as an instance
           #                                       class    |     instance
           class_string = client.is_a?(Class) ? client.to_s : client.class.to_s
           class_string = class_string.underscore
-          args = ordered_args(args) if args
+          args = args.present? ? ordered_args(*args) : nil
           "#{class_string}/#{action}/#{args}"
         end
 
@@ -59,8 +59,10 @@ module JsonApiResource
           "#{cache_key(client, action)}id:#{id}"
         end
 
-        def ordered_args(args)
-          args.sort.to_h
+        def ordered_args(*args)
+          args.map do |arg|
+            arg.is_a?(Hash) ? arg.sort.to_h : arg
+          end.sort
         end
 
         def splitable?(result_set)

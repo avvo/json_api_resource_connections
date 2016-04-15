@@ -34,11 +34,9 @@ module JsonApiResourceConnections
     end
 
     def connection
-      @connection ||= JsonApiResource::Connections::CachedCircuitbreakerServerConnection.new client: client, cache: false
+      @connection ||= JsonApiResource::Connections::CachedCircuitbreakerServerConnection.new( client: self.client, caching: false )
     end
   end
 end
 
-JsonApiResource::Resource.instance_eval do
-  include JsonApiResourceConnections
-end
+JsonApiResource::Resource.send :include, JsonApiResourceConnections

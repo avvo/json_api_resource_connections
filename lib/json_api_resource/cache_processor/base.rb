@@ -3,7 +3,7 @@ module JsonApiResource
     class Base
 
       class << self 
-        def write( client, action, *args, result )
+        def write( result, client, action, *args )
           result
         end
 

@@ -27,16 +27,16 @@ class CompressedCacheProcessorTest < Minitest::Test
   end
 
   def test_write_splits_results_with_ids_into_blocks
-    @proc.write(User, :where, {id: [1,2]}, @result_block_with_ids)
-    assert_equal [1, 2], @cache.read("user/where/{:id=>[1, 2]}")
+    @proc.write( @result_block_with_ids, User, :where, {id: [1,2]})
+    assert_equal [1, 2], @cache.read("user/where/[{:id=>[1, 2]}]")
   end
 
   def test_split_data_writes_do_not_duplicate_individual_data_entries
-    @proc.write(User, :where, {id: [1,2]}, @result_block_with_ids)
-    @proc.write(User, :where, {per_page: 10}, @result_block_with_ids)
+    @proc.write( @result_block_with_ids, User, :where, {id: [1,2]})
+    @proc.write( @result_block_with_ids, User, :where, {per_page: 10})
 
-    assert_equal [1, 2], @cache.read("user/where/{:id=>[1, 2]}")
-    assert_equal [1, 2], @cache.read("user/where/{:per_page=>10}")
+    assert_equal [1, 2], @cache.read("user/where/[{:id=>[1, 2]}]")
+    assert_equal [1, 2], @cache.read("user/where/[{:per_page=>10}]")
 
     assert_equal( { "id" => 1,
                   "name" => "jon",
@@ -45,23 +45,21 @@ class CompressedCacheProcessorTest < Minitest::Test
   end
 
   def test_writes_non_idd_results_wholesale
-    @proc.write(Climb, :where, {id: [1,2]}, @result_block_without_ids)
-    assert_equal @result_block_without_ids, @cache.read("climb/where/{:id=>[1, 2]}")
+    @proc.write(@result_block_without_ids, Climb, :where, {id: [1,2]} )
+    assert_equal @result_block_without_ids, @cache.read("climb/where/[{:id=>[1, 2]}]")
   end
 
   def test_read_reassembles_split_data
-    @proc.write(User, :where, {id: [1,2]}, @result_block_with_ids)
-    @proc.write(User, :where, {per_page: 10}, @result_block_with_ids)
+    @proc.write( @result_block_with_ids, User, :where, {id: [1,2]})
+    @proc.write( @result_block_with_ids, User, :where, {per_page: 10})
 
     assert_equal @result_block_with_ids, @proc.read(User, :where, {id: [1,2]})
     assert_equal @result_block_with_ids, @proc.read(User, :where, {per_page: 10})
   end
 
   def test_read_unsplitable_data_returns_undamaged_data
-    @proc.write(Climb, :where, {id: [1,2]}, @result_block_without_ids)
-    @proc.write(Climb, :where, {per_page: 10}, @result_block_without_ids)
-
-    puts @cache.inspect
+    @proc.write( @result_block_without_ids, Climb, :where, {id: [1,2]} )
+    @proc.write( @result_block_without_ids, Climb, :where, {per_page: 10} )
 
     assert_equal @result_block_without_ids, @proc.read(Climb, :where, {id: [1,2]})
     assert_equal @result_block_without_ids, @proc.read(Climb, :where, {per_page: 10})

@@ -26,7 +26,7 @@ end
 class CachedUserResource < JsonApiResource::Resource
   wraps User
 
-  cache_fallback :where, :find
+  cache_fallback :where, :find, :search
 
 
   property :id
@@ -63,14 +63,35 @@ class Cache
   end
 
   def read( key )
-    @store[key]
+    @store.fetch key
   end
+end
+
+$error = {conn: nil, error: nil, count: 0}
+
+class Notifier < JsonApiResource::ErrorNotifier::Base
+  class_attribute :count
+  self.count = 0
+
+  class << self
+    def notify( connection, error )
+      self.count += 1
+      $error = {conn: connection.class, error: error, count: count}
+    end
+  end 
 end
 
 JsonApiResource::CacheProcessor::CompressedCacheProcessor.cache = Cache.new
 JsonApiResource::Connections::CacheConnection.cache_processor = JsonApiResource::CacheProcessor::CompressedCacheProcessor
 JsonApiResource::Connections::CachedCircuitbreakerServerConnection.cache_processor = JsonApiResource::CacheProcessor::CompressedCacheProcessor
 
+JsonApiResource::Connections::CacheConnection.error_notifier = Notifier
+JsonApiResource::Connections::CachedCircuitbreakerServerConnection.error_notifier = Notifier
+
 def raise_client_error!
   -> (*args){ raise JsonApiClient::Errors::ServerError.new("http://localhost:3000/api/1") }
+end
+
+def raise_404!
+  -> (*args){ raise JsonApiClient::Errors::NotFound.new("http://localhost:3000/api/1") }
 end

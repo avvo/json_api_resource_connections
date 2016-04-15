@@ -14,7 +14,7 @@ module JsonApiResource
       end
 
       def report_error( e )
-        unless i.is_a? ServerNotReadyError
+        unless e.is_a? ServerNotReadyError
           error_notifier.notify( self, e ) if error_notifier.present?
         end
       end
@@ -24,7 +24,7 @@ module JsonApiResource
           
           result = client_request(action, *args)
 
-          cache_processor.write(client, action, args, result) if cache?
+          cache_processor.write(result, client, action, *args) if cache?
 
           result
 
