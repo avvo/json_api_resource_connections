@@ -6,9 +6,16 @@ require 'active_support/core_ext/class/attribute'
 require 'json_api_resource'
 require "json_api_resource_connecitons/version"
 
+require 'multiconnect'
+
+require 'json_api_resource/cache_processor'
+
+require 'json_api_resource/connections/cache_connection'
+require 'json_api_resource/connections/cached_circuitbreaker_server_connection'
+require 'json_api_resource/connections/server_not_ready_error'
+
+
 module JsonApiResourceConnections
-  require 'json_api_resource/connections'
-  require 'json_api_resource/cache_processor'
 
   extend ActiveSupport::Concern
 
