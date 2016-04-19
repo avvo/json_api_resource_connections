@@ -29,8 +29,10 @@ module JsonApiResource
           key = cache_key(client, action, *args)
           set = cache.fetch key
 
+          raise KeyError.new("#{key} not found") if set.blank?
+
           # set can be an array of blobs or an array of ids
-          set.map do |item|
+          set.map! do |item|
             # if the results are ids
             if item.is_a? Integer
               # grab the actual object from cache
@@ -42,6 +44,7 @@ module JsonApiResource
               item
             end
           end
+          JsonApiClient::ResultSet.new(Array(set))
         end
 
         private 
@@ -62,7 +65,7 @@ module JsonApiResource
         def ordered_args(*args)
           args.map do |arg|
             arg.is_a?(Hash) ? arg.sort.to_h : arg
-          end.sort
+          end
         end
 
         def splitable?(result_set)
