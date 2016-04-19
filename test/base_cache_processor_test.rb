@@ -8,8 +8,8 @@ class BaseCacheProcessorTest < Minitest::Test
   end
 
   def test_responds_to_read
-    assert JsonApiResource::CacheProcessor::Base.read(User, :find, 1)
-    assert JsonApiResource::CacheProcessor::Base.read(User, :where, {id: 1, per_page: 10})
+    assert JsonApiResource::CacheProcessor::Base.fetch(User, :find, 1)
+    assert JsonApiResource::CacheProcessor::Base.fetch(User, :where, {id: 1, per_page: 10})
   end
 
 end

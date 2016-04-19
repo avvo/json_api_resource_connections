@@ -16,7 +16,7 @@ module JsonApiResource
       end
 
       def request( action, *args )
-        cache_processor.read client, action, *args
+        cache_processor.fetch client, action, *args
       end
     end
   end

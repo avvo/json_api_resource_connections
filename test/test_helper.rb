@@ -62,7 +62,7 @@ class Cache
     @store[key] = value
   end
 
-  def read( key )
+  def fetch( key )
     @store.fetch key
   end
 end

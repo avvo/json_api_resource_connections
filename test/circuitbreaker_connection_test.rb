@@ -129,7 +129,7 @@ class CircuitbreakerConnectionTest < Minitest::Test
 
         assert result.success?
 
-        assert connection.cache_processor.read User, :where, {:id=>[10, 15], :order=>:id}
+        assert connection.cache_processor.fetch User, :where, {:id=>[10, 15], :order=>:id}
       end
     end
 
@@ -150,7 +150,7 @@ class CircuitbreakerConnectionTest < Minitest::Test
 
 
         assert_raises KeyError do
-          connection.cache_processor.read User, :where, id: [10, 19]
+          connection.cache_processor.fetch User, :where, id: [10, 19]
         end
       end
     end

@@ -7,7 +7,7 @@ module JsonApiResource
           result
         end
 
-        def read( client, action, *args )
+        def fetch( client, action, *args )
           []
         end
       end

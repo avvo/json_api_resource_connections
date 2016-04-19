@@ -25,9 +25,9 @@ module JsonApiResource
           result
         end
 
-        def read(client, action, *args)
+        def fetch(client, action, *args)
           key = cache_key(client, action, *args)
-          set = cache.read key
+          set = cache.fetch key
 
           # set can be an array of blobs or an array of ids
           set.map do |item|
@@ -35,7 +35,7 @@ module JsonApiResource
             if item.is_a? Integer
               # grab the actual object from cache
               key = item_cache_key(client, action, item)
-              cache.read key
+              cache.fetch key
             # if they are not ids
             else
               # they have to be the full objects. return them
