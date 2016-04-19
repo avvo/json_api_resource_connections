@@ -21,8 +21,9 @@ module JsonApiResource
 
       def request( action, *args )
         if ready_for_request?
-          
-          result = client_request(action, *args)
+
+          client_args = args.deep_dup
+          result = client_request(action, *client_args)
 
           cache_processor.write(result, client, action, *args) if cache?
 

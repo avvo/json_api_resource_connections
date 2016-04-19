@@ -54,8 +54,8 @@ module JsonApiResource
           #                                       class    |     instance
           class_string = client.is_a?(Class) ? client.to_s : client.class.to_s
           class_string = class_string.underscore
-          args = args.present? ? ordered_args(*args) : nil
-          "#{class_string}/#{action}/#{args}"
+          formatted_args = args.present? ? ordered_args(*args) : nil
+          "#{class_string}/#{action}/#{formatted_args}"
         end
 
         def item_cache_key(client, action, id)
