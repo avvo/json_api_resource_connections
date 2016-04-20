@@ -1,4 +1,4 @@
-# JsonApiResourceConnecitons
+# JsonApiResourceConnections
 
 Complex connection behaviour to sit on top of [JsonApiResource](http://github.com/avvo/json_api_resource) v2.0. This makes circuitbreaker connections default and enables cache flallbacks to when the server replies with anything other than a 404
 
@@ -9,7 +9,7 @@ TODO: Delete this and the text above, and describe your gem
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'json_api_resource_connecitons'
+gem 'json_api_resource_connections'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install json_api_resource_connecitons
+    $ gem install json_api_resource_connections
 
 And it should auto magically inject itself into `JsonApiResource::Resource`
 
@@ -71,7 +71,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/json_api_resource_connecitons.
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/json_api_resource_connections.
 
 
 ## License

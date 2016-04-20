@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class JsonApiResourceConnecitonsTest < Minitest::Test
+class JsonApiResourceConnectionsTest < Minitest::Test
   def test_that_it_has_a_version_number
-    refute_nil ::JsonApiResourceConnecitons::VERSION
+    refute_nil ::JsonApiResourceConnections::VERSION
   end
 
   def test_connections_load

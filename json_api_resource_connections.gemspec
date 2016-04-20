@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'json_api_resource_connecitons/version'
+require 'json_api_resource_connections/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "json_api_resource_connecitons"
-  spec.version       = JsonApiResourceConnecitons::VERSION
+  spec.name          = "json_api_resource_connections"
+  spec.version       = JsonApiResourceConnections::VERSION
   spec.authors       = ["Greg"]
   spec.email         = ["greg@avvo.com"]
 

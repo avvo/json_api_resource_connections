@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in json_api_resource_connecitons.gemspec
+# Specify your gem's dependencies in json_api_resource_connections.gemspec
 gemspec
 
 gem 'rake'
