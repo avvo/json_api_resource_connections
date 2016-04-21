@@ -52,6 +52,16 @@ class ClimbResource < JsonApiResource::Resource
              grade: ""
 end
 
+class CachedClimbResource < JsonApiResource::Resource
+  wraps Climb
+
+  try_cache_first :search
+
+  properties  name: "",
+              type: "",
+             grade: ""
+end
+
 class Cache
   
   def initialize

@@ -28,9 +28,23 @@ module JsonApiResourceConnections
       class_attribute :_fallbacks
       self._fallbacks = []
 
+      class_attribute :_cache_first
+      self._cache_first = []
+
       def cache_fallback(*actions)
         self._fallbacks = _fallbacks + Array(actions)
-        add_connection JsonApiResource::Connections::CacheConnection, client: self.client_class, only: self._fallbacks
+        options = { client: self.client_class }
+        options[:only] = self._fallbacks if self._fallbacks.present?
+
+        add_connection JsonApiResource::Connections::CacheConnection, options
+      end
+
+      def try_cache_first(*actions)
+        self._cache_first = _cache_first + Array(actions)
+        options = { client: self.client_class }
+        options[:only] = self._cache_first if self._cache_first.present?
+
+        prepend_connection JsonApiResource::Connections::CacheConnection, options
       end
 
       def wraps(client)

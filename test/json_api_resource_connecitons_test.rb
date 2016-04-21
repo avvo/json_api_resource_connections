@@ -62,4 +62,20 @@ class JsonApiResourceConnectionsTest < Minitest::Test
       end
     end
   end
+
+  def test_cache_first_avoids_call_on_cache_hit
+    CachedClimbResource._connections[1].stub :ready_for_request?, true do
+      Climb.stub :search, JsonApiClient::ResultSet.new([Climb.new(id: 10), Climb.new(id: 15)]) do
+        result = CachedClimbResource.search
+
+        refute_empty result
+      end
+    end
+    
+    Climb.stub :search, raise_client_error! do
+      result = CachedClimbResource.search
+
+      refute_empty result
+    end
+  end
 end
