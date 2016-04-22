@@ -1,6 +1,6 @@
 # JsonApiResourceConnections
 
-Complex connection behaviour to sit on top of [JsonApiResource](http://github.com/avvo/json_api_resource) v2.0. This makes circuitbreaker connections default and enables cache flallbacks to when the server replies with anything other than a 404
+Complex connection behaviour to sit on top of [JsonApiResource](http://github.com/avvo/json_api_resource) v2.0. This makes circuitbreaker connections default and enables cache fallbacks to when the server replies with anything other than a 404
 
 ## Installation
 
@@ -38,7 +38,9 @@ Will force the resource to try to fetch the data requested from the cache first,
 
 Requires caching to be enabled as escribed in [setup](#setup).
 
-### CacheProcessor
+### Components
+
+#### CacheProcessor
 
 Cache Processor is the component that handles caching. `CompressedCacheProcessor` caches results in two pieces: the actual object and the ids for the action. So your `Snack.search(q: "cheezbergher")` call will cache as 
 ``` ruby
@@ -53,13 +55,9 @@ Cache Processor is the component that handles caching. `CompressedCacheProcessor
 
 When no id is present in the response, the full response will be cached.
 
-### Connections
-
-The default connection is the `CachedCircuitbreakerServerConnection`. It will prevent any more calls to the server if any non-404 error is returned for 30 seconds. If you assign cache_processor, the cache part will kick in and cache the results returned from the server. 
-
 #### CachedCircuitbreakerServerConnection
 
-Default connection. Will try calling the server. If the request fails, it will drop out of all subsequent calls for 30 seconds. Failure is defined as any non-404 error; a 500 server error or any exception in the code will trip the circuitbreaker.
+New default connection. Calls the server, but if the request fails, it will drop all subsequent calls for 30 seconds. Failure is defined as any non-404 error; a 500 server error or any exception in the code will trip the circuitbreaker.
 
 If the request succeeds, it will try to cache the result using its cache_processor. If none is set up, no caching will occur. 
 
