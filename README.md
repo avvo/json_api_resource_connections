@@ -30,13 +30,13 @@ Once the gem is included, it automatically injects its code into all `JsonApiRes
 
 Enables retreival of data from cache if the server connection fails. Passing no actions will enable cache fallbacks for everything. 
 
-Requires caching to be enabled as escribed in [setup](#setup).
+Requires caching to be enabled as described in [setup](#setup).
 
 #### try_cache_first( *actions )
 
 Will force the resource to try to fetch the data requested from the cache first, before it tries to hit the server. Passing no actions will force trying caching for everything.
 
-Requires caching to be enabled as escribed in [setup](#setup).
+Requires caching to be enabled as described in [setup](#setup).
 
 ### Components
 
@@ -67,7 +67,7 @@ See [setup](#setup) for enabling caching.
 
 Given an action, will try to fetch results from the cache via cache_processor. Is used as both fallback and cache first connection. 
 
-Requires caching to be enabled as escribed in [setup](#setup).
+Requires caching to be enabled as described in [setup](#setup).
 
 ## Setup
 
