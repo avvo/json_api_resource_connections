@@ -18,10 +18,10 @@ class JsonApiResourceConnectionsTest < Minitest::Test
 
   def test_cache_connection_provides_fallback_for_successful_call
     User.stub :search, raise_client_error! do
-      result = CachedUserResource.search
+      assert_raises JsonApiResource::Errors::UnsuccessfulRequest do
+        result = CachedUserResource.search
 
-      assert_equal 500, result.meta[:status]
-      assert_empty result
+      end
     end
 
     CachedUserResource._connections.first.stub :ready_for_request?, true do
