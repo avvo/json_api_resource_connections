@@ -4,23 +4,25 @@ class CompressedCacheProcessorTest < Minitest::Test
 
   def setup
     @timestamp = Time.now
-    @result_block_with_ids = [{ "id" => 1,
+      @result_block_with_ids = JsonApiClient::ResultSet.new(
+                    [User.new({ "id" => 1,
                               "name" => "jon",
                         "profesison" => "photographer",
-                        "updated_at" => @timestamp},
+                        "updated_at" => @timestamp}),
                               
-                              { "id" => 2,
+                     User.new({ "id" => 2,
                               "name" => "daniel",
                         "profesison" => "climber",
-                        "updated_at" => @timestamp}]
+                        "updated_at" => @timestamp})])
 
-    @result_block_without_ids = [{"name" => "Paint it Black",
+    @result_block_without_ids = JsonApiClient::ResultSet.new(
+                      [Climb.new({"name" => "Paint it Black",
                                   "type" => "boulder",
-                                 "grade" => "v14"},
+                                 "grade" => "v14"}),
 
-                                { "name" => "Jumbo Love",
+                      Climb.new({ "name" => "Jumbo Love",
                                   "type" => "sport climb",
-                                 "grade" => "5.15b/c"}]
+                                 "grade" => "5.15b/c"})])
 
     @proc  = JsonApiResource::CacheProcessor::CompressedCacheProcessor
     @cache = @proc.cache
@@ -28,25 +30,25 @@ class CompressedCacheProcessorTest < Minitest::Test
 
   def test_write_splits_results_with_ids_into_blocks
     @proc.write( @result_block_with_ids, User, :where, {id: [1,2]})
-    assert_equal [1, 2], @cache.fetch("user/where/[{:id=>[1, 2]}]")
+    assert_equal [1, 2], @cache.fetch("connection::#{JsonApiResourceConnections::VERSION}/user/where/[{:id=>[1, 2]}]")
   end
 
   def test_split_data_writes_do_not_duplicate_individual_data_entries
     @proc.write( @result_block_with_ids, User, :where, {id: [1,2]})
     @proc.write( @result_block_with_ids, User, :where, {per_page: 10})
 
-    assert_equal [1, 2], @cache.fetch("user/where/[{:id=>[1, 2]}]")
-    assert_equal [1, 2], @cache.fetch("user/where/[{:per_page=>10}]")
+    assert_equal [1, 2], @cache.fetch("connection::#{JsonApiResourceConnections::VERSION}/user/where/[{:id=>[1, 2]}]")
+    assert_equal [1, 2], @cache.fetch("connection::#{JsonApiResourceConnections::VERSION}/user/where/[{:per_page=>10}]")
 
     assert_equal( { "id" => 1,
                   "name" => "jon",
             "profesison" => "photographer",
-            "updated_at" => @timestamp }, @cache.fetch("user/where/id:1"))
+            "updated_at" => @timestamp }, @cache.fetch("connection::#{JsonApiResourceConnections::VERSION}/user/where/id:1"))
   end
 
   def test_writes_non_idd_results_wholesale
-    @proc.write(@result_block_without_ids, Climb, :where, {id: [1,2]} )
-    assert_equal @result_block_without_ids, @cache.fetch("climb/where/[{:id=>[1, 2]}]")
+    @proc.write( @result_block_without_ids, Climb, :where, {id: [1,2]} )
+    assert_equal @result_block_without_ids.map(&:attributes), @cache.fetch("connection::#{JsonApiResourceConnections::VERSION}/climb/where/[{:id=>[1, 2]}]")
   end
 
   def test_fetch_reassembles_split_data

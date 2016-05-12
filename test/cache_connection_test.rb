@@ -3,15 +3,16 @@ require 'test_helper'
 class CacheConnectionTest < Minitest::Test
 
   def setup
-       @result_block_with_ids = [{ "id" => 1,
+    @result_block_with_ids = JsonApiClient::ResultSet.new(
+                    [User.new({ "id" => 1,
                               "name" => "jon",
                         "profesison" => "photographer",
-                        "updated_at" => @timestamp},
+                        "updated_at" => @timestamp}),
                               
-                              { "id" => 2,
+                     User.new({ "id" => 2,
                               "name" => "daniel",
                         "profesison" => "climber",
-                        "updated_at" => @timestamp}]
+                        "updated_at" => @timestamp})])
 
     @proc  = JsonApiResource::CacheProcessor::CompressedCacheProcessor
     @cache = @proc.cache

@@ -19,7 +19,7 @@ module JsonApiResource
             write_objects(client, action, result_set)
 
           else
-            cache.write key, result_set
+            write_blob(key, result_set)
           end
 
           result
@@ -37,11 +37,12 @@ module JsonApiResource
             if item.is_a? Integer
               # grab the actual object from cache
               key = item_cache_key(client, action, item)
-              cache.fetch key
+              attrs = cache.fetch key
+              client.new attrs
             # if they are not ids
             else
               # they have to be the full objects. return them
-              item
+              client.new item
             end
           end
           JsonApiClient::ResultSet.new(Array(set))
@@ -55,7 +56,7 @@ module JsonApiResource
           class_string = client.is_a?(Class) ? client.to_s : client.class.to_s
           class_string = class_string.underscore
           formatted_args = args.present? ? ordered_args(*args) : nil
-          "#{class_string}/#{action}/#{formatted_args}"
+          "connection::#{JsonApiResourceConnections::VERSION}/#{class_string}/#{action}/#{formatted_args}"
         end
 
         def item_cache_key(client, action, id)
@@ -79,8 +80,12 @@ module JsonApiResource
         def write_objects(client, action, result_set)
           result_set.each do |item|
             key = item_cache_key client, action, item["id"]
-            cache.write key, item
+            cache.write key, item.attributes
           end
+        end
+
+        def write_blob(key, result_set)
+          cache.write key, result_set.map(&:attributes)
         end
       end
     end
