@@ -73,7 +73,7 @@ class Cache
   end
 
   def fetch( key )
-    @store.fetch key
+    @store.fetch(key).dup
   end
 end
 
