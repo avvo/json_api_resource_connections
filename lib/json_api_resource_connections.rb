@@ -54,10 +54,6 @@ module JsonApiResourceConnections
         add_connection JsonApiResource::Connections::CachedCircuitbreakerServerConnection, client: self.client_class
       end
     end
-
-    def connection
-      @connection ||= JsonApiResource::Connections::CachedCircuitbreakerServerConnection.new( client: self.client, caching: false )
-    end
   end
 end
 
