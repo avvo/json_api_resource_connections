@@ -40,29 +40,6 @@ class JsonApiResourceConnectionsTest < Minitest::Test
     end
   end
 
-  def test_resource_instance_connection_is_overriden
-    @resource = ClimbResource.new
-    
-    @resource.client.stub :save, raise_client_error! do
-      
-      result = @resource.save
-
-      refute result
-    end
-
-    result = @resource.save
-
-    refute result, "circuit should still be broken"
-
-    @resource.client.stub :save, true do 
-      @resource.connection.stub :ready_for_request?, true do
-        
-        result = @resource.save
-        assert result, "circuit should be restored"
-      end
-    end
-  end
-
   def test_cache_first_avoids_call_on_cache_hit
     CachedClimbResource._connections[1].stub :ready_for_request?, true do
       Climb.stub :search, JsonApiClient::ResultSet.new([Climb.new(id: 10), Climb.new(id: 15)]) do
