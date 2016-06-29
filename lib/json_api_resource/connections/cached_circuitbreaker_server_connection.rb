@@ -10,7 +10,9 @@ module JsonApiResource
       def initialize(options)
         super options
         @caching            = options.fetch :caching, true
-        @timeout            = Time.now
+        # if the machine is fast enough, a call to this connection can circuitbreak
+        #   ron a call right after init because Time.now is not granular enough
+        @timeout            = 10.seconds.ago
       end
 
       def report_error( e )
