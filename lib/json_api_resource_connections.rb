@@ -53,6 +53,28 @@ module JsonApiResourceConnections
         # now that we know where to connect to, let's do it
         add_connection JsonApiResource::Connections::CachedCircuitbreakerServerConnection, client: self.client_class
       end
+
+      def cacheless_find( id )
+        direct_execute :find, id
+      end
+
+      def cacheless_where( opts = {} )
+        direct_execute :where, opts
+      end
+
+      private
+
+      # skips looking in cache first and goes to the server directly
+      def direct_execute( action, *args )
+        results = cacheless_connection.execute(action, *args)
+        JsonApiResource::Handlers::FindHandler.new(results).result
+      end
+
+      def cacheless_connection
+        @cacheless_connection ||=_connections.find do |c| 
+          c.is_a? JsonApiResource::Connections::CachedCircuitbreakerServerConnection
+        end
+      end
     end
   end
 end

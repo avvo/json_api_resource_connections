@@ -38,6 +38,14 @@ Will force the resource to try to fetch the data requested from the cache first,
 
 Requires caching to be enabled as described in [setup](#setup).
 
+#### cacheless_find( id )
+
+If you are using `try_cache_first` and need to bypass it for `find`, this is the way to do it.
+
+#### cacheless_where( opts = {} )
+
+If you are using `try_cache_first` and need to bypass it for `where`, this is the way to do it.
+
 ### Components
 
 #### CacheProcessor
