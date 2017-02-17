@@ -55,7 +55,8 @@ module JsonApiResourceConnections
       end
 
       def cacheless_find( id )
-        direct_execute :find, id
+        result = direct_execute :find, id
+        JsonApiResource::Handlers::FindHandler.new(result).result
       end
 
       def cacheless_where( opts = {} )
@@ -66,8 +67,7 @@ module JsonApiResourceConnections
 
       # skips looking in cache first and goes to the server directly
       def direct_execute( action, *args )
-        results = cacheless_connection.execute(action, *args)
-        JsonApiResource::Handlers::FindHandler.new(results).result
+        cacheless_connection.execute(action, *args)
       end
 
       def cacheless_connection
