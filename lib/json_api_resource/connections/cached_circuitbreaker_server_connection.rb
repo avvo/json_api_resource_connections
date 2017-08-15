@@ -33,11 +33,7 @@ module JsonApiResource
           result
 
         else
-          if @previous_error.present?
-            raise ServerNotReadyError.new(@previous_error.message)
-          else
-            raise ServerNotReadyError
-          end
+          raise ServerNotReadyError.new(@previous_error.try(:message))
         end
 
       rescue JsonApiClient::Errors::NotFound => e
