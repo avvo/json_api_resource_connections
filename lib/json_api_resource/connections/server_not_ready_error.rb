@@ -9,7 +9,7 @@ module JsonApiResource
       end
 
       def to_s
-        "#{super}  *** Previous Error:: [#{ previous_error }]"
+        "#{super}  *** Previous Error:: [#{ @previous_error }]"
       end
 
     end
