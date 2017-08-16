@@ -13,6 +13,7 @@ module JsonApiResource
         # if the machine is fast enough, a call to this connection can circuitbreak
         #   ron a call right after init because Time.now is not granular enough
         @timeout            = 10.seconds.ago
+        @previous_error     = nil
       end
 
       def report_error( e )
@@ -32,14 +33,14 @@ module JsonApiResource
           result
 
         else
-          raise ServerNotReadyError
+          raise ServerNotReadyError.new(@previous_error.try(:message))
         end
 
       rescue JsonApiClient::Errors::NotFound => e
         empty_set_with_errors e
       rescue => e
         @timeout = timeout
-
+        @previous_error = e
         # propagate the error up to be handled by Connection::Base
         raise e
       end
