@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+source 'https://packagecloud.io/avvo/gems'
 
 # Specify your gem's dependencies in json_api_resource_connections.gemspec
 gemspec

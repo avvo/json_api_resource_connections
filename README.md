@@ -4,21 +4,20 @@ Complex connection behaviour to sit on top of [JsonApiResource](http://github.co
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Install json_api_resource_connections from the command line:
 
-```ruby
-gem 'json_api_resource_connections'
-```
+    $ gem install json_api_resource_connections --source https://packagecloud.io/avvo/gems
 
-And then execute:
+or within a Gemfile:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install json_api_resource_connections
+    source 'https://packagecloud.io/avvo/gems' do
+      gem 'json_api_resource_connections'
+    end
 
 And it should auto magically inject itself into `JsonApiResource::Resource`
+
+
+To push new versions of this gem to the packagecloud repo, a git commit will need to have a tag with a version number (e.g. v0.2.9). When a commit is pushed to Github with a version tag, this will trigger a CircleCI job that will build the gem, run any tests, and push the new gem version to packagecloud.
 
 ## Usage
 
@@ -28,7 +27,7 @@ Once the gem is included, it automatically injects its code into all `JsonApiRes
 
 #### cache_fallback( *actions )
 
-Enables retreival of data from cache if the server connection fails. Passing no actions will enable cache fallbacks for everything. 
+Enables retreival of data from cache if the server connection fails. Passing no actions will enable cache fallbacks for everything.
 
 Requires caching to be enabled as described in [setup](#setup).
 
@@ -50,7 +49,7 @@ If you are using `try_cache_first` and need to bypass it for `where`, this is th
 
 #### CacheProcessor
 
-Cache Processor is the component that handles caching. `CompressedCacheProcessor` caches results in two pieces: the actual object and the ids for the action. So your `Snack.search(q: "cheezbergher")` call will cache as 
+Cache Processor is the component that handles caching. `CompressedCacheProcessor` caches results in two pieces: the actual object and the ids for the action. So your `Snack.search(q: "cheezbergher")` call will cache as
 ``` ruby
 'snack/search/q=>"cheezbergher"' => `[1, 2, 3, 4]`
 
@@ -67,13 +66,13 @@ When no id is present in the response, the full response will be cached.
 
 New default connection. Calls the server, but if the request fails, it will drop all subsequent calls for 30 seconds. Failure is defined as any non-404 error; a 500 server error or any exception in the code will trip the circuitbreaker.
 
-If the request succeeds, it will try to cache the result using its cache_processor. If none is set up, no caching will occur. 
+If the request succeeds, it will try to cache the result using its cache_processor. If none is set up, no caching will occur.
 
 See [setup](#setup) for enabling caching.
 
 #### CacheConnection
 
-Given an action, will try to fetch results from the cache via cache_processor. Is used as both fallback and cache first connection. 
+Given an action, will try to fetch results from the cache via cache_processor. Is used as both fallback and cache first connection.
 
 Requires caching to be enabled as described in [setup](#setup).
 
@@ -111,4 +110,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/avvo]/
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
