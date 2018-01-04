@@ -3,12 +3,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.3.6
     steps:
       - checkout
       - run: bundle config packagecloud.io $PACKAGECLOUD_READ_TOKEN
       - run: bundle install
-      - run: bundle exec rake test
+      - run: rake test
       # Clean up any .gem files from all previous builds
       - run: rm -f *.gem
       - run: gem install package_cloud
